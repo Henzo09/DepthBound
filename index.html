@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEPTHBOUND</title>
+    <title>DEPTHBOUND - Desça o Abismo</title>
     <style>
         * {
             margin: 0;
@@ -572,7 +572,7 @@
     <a href="#abyss">Abismo</a>
     <a href="#gameplay">Gameplay</a>
     <a href="#team">Equipe</a>
-    <a href="https://www.roblox.com/pt/games/89884409320225/Depthbound" class="play-now-btn">🎮 Jogue Agora</a>
+    <a href="SEU_LINK_AQUI" class="play-now-btn">🎮 Jogue Agora</a>
 </nav>
         </div>
     </header>
@@ -712,7 +712,7 @@
     </div>
 
     <script>
-
+        // Efeito de scroll no header
         window.addEventListener('scroll', function() {
             const header = document.getElementById('header');
             if (window.scrollY > 50) {
@@ -722,6 +722,7 @@
             }
         });
 
+        // Smooth scrolling para links âncora
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -734,7 +735,8 @@
                 }
             });
         });
-	    
+
+        // Adicionar mais partículas dinamicamente
         function createParticle() {
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -742,18 +744,22 @@
             particle.style.animationDelay = Math.random() * 15 + 's';
             particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
             
+            // Variar a cor das partículas
             const colors = ['rgba(74, 158, 255, 0.6)', 'rgba(255, 68, 68, 0.4)', 'rgba(255, 255, 255, 0.3)'];
             particle.style.background = colors[Math.floor(Math.random() * colors.length)];
             
             document.querySelector('.floating-particles').appendChild(particle);
             
+            // Remover partícula após animação
             setTimeout(() => {
                 particle.remove();
             }, 20000);
         }
 
+        // Criar partículas continuamente
         setInterval(createParticle, 2000);
 
+        // Efeito de hover nas seções
         document.querySelectorAll('.section').forEach(section => {
             section.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-15px) scale(1.02)';
@@ -763,6 +769,397 @@
                 this.style.transform = 'translateY(0) scale(1)';
             });
         });
+
+        // Efeito de abismo
+let konamiCode = [
+    'ArrowUp', 'ArrowUp',
+    'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight',
+    'ArrowLeft', 'ArrowRight',
+    'KeyB', 'KeyA'
+];
+
+let index = 0;
+let timeout;
+
+// Sistema de áudio
+const audioUrls = {
+    abyssOpen: '', // Som de buraco abrindo
+    suck: '', // Som de sucção
+    spit: '', // Som de cuspir
+    abyssClose: '' // Som de fechamento
+};
+
+function playSound(soundKey) {
+    try {
+        const audio = new Audio(audioUrls[soundKey]);
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('Erro no áudio:', e));
+    } catch (error) {
+        console.log('Erro ao reproduzir som:', error);
+    }
+}
+
+function EfeitoAbismo() {
+    console.log('🕳️ Abismo ativado! A maldição foi desencadeada...');
+    
+    // Encontrar a seção do abismo
+    const abyssSection = document.querySelector('#abyss');
+    const abyssContainer = document.querySelector('.abyss-container');
+    
+    if (!abyssSection || !abyssContainer) {
+        console.error('Seção do abismo não encontrada!');
+        return;
+    }
+    
+    // Tocar som de abertura do abismo
+    playSound('abyssOpen');
+    
+    // Criar o buraco do abismo
+    const abyssHole = document.createElement('div');
+    abyssHole.className = 'abyss-hole';
+    abyssHole.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0px;
+        height: 0px;
+        background: radial-gradient(
+            circle,
+            #000000 0%,
+            #000000 40%,
+            rgba(0,0,0,0.95) 60%,
+            rgba(74, 158, 255, 0.3) 80%,
+            transparent 100%
+        );
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        pointer-events: none;
+        box-shadow: 
+            inset 0 0 100px rgba(74, 158, 255, 0.5),
+            0 0 200px rgba(0, 0, 0, 0.9),
+            0 0 300px rgba(74, 158, 255, 0.3);
+        animation: abyssGrow 3s ease-out forwards;
+    `;
+    
+    // Adicionar keyframes para as animações
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes abyssGrow {
+            0% {
+                width: 0px;
+                height: 0px;
+                opacity: 0;
+            }
+            50% {
+                width: 300px;
+                height: 300px;
+                opacity: 0.8;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 1;
+            }
+        }
+        
+        @keyframes suckIn {
+            0% {
+                transform: translateY(0px) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-20px) scale(0.8) rotate(180deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-200px) scale(0.1) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes spitOut {
+            0% {
+                transform: translateY(-200px) scale(0.1) rotate(360deg);
+                opacity: 0;
+            }
+            30% {
+                transform: translateY(-100px) scale(0.5) rotate(270deg);
+                opacity: 0.5;
+            }
+            70% {
+                transform: translateY(50px) scale(1.2) rotate(90deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0px) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes abyssContainer {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.1);
+                filter: brightness(0.5);
+            }
+            100% {
+                transform: scale(1.05);
+                filter: brightness(0.3);
+            }
+        }
+        
+        @keyframes abyssShrink {
+            0% {
+                width: 400px;
+                height: 400px;
+                opacity: 1;
+            }
+            50% {
+                width: 450px;
+                height: 450px;
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(180deg);
+            }
+            100% {
+                width: 0px;
+                height: 0px;
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+        
+        @keyframes containerRestore {
+            0% {
+                transform: scale(1.05);
+                filter: brightness(0.3);
+            }
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+        
+        .abyss-activated .depth-layer {
+            animation: suckIn 2s ease-in forwards;
+        }
+        
+        .abyss-activated .abyss-container {
+            animation: abyssContainer 3s ease-out forwards;
+        }
+        
+        .abyss-spitting .depth-layer {
+            animation: spitOut 2s ease-out forwards;
+        }
+        
+        .abyss-spitting .abyss-container {
+            animation: containerRestore 2s ease-out forwards;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Posicionar o abismo container como relativo para o buraco
+    abyssContainer.style.position = 'relative';
+    
+    // Adicionar o buraco ao container do abismo
+    abyssContainer.appendChild(abyssHole);
+    
+    // Adicionar classe de ativação para animar os elementos
+    document.body.classList.add('abyss-activated');
+    
+    // Animar as camadas de profundidade individualmente (sucção)
+    const depthLayers = document.querySelectorAll('.depth-layer');
+    depthLayers.forEach((layer, index) => {
+        setTimeout(() => {
+            layer.style.animation = `suckIn 2s ease-in forwards`;
+        }, index * 300); // Delay escalonado para cada camada
+    });
+    
+    // Tocar som de sucção
+    setTimeout(() => {
+        playSound('suck');
+    }, 1000);
+    
+    // Efeitos sonoros visuais (partículas sendo sugadas)
+    createSuctionParticles();
+    
+    // Após 5 segundos, começar a cuspir
+    setTimeout(() => {
+        console.log('💨 O abismo está cuspindo os elementos de volta!');
+        
+        // Tocar som de cuspir
+        playSound('spit');
+        
+        // Remover classe de sucção e adicionar classe de cuspir
+        document.body.classList.remove('abyss-activated');
+        document.body.classList.add('abyss-spitting');
+        
+        // Animar as camadas sendo cuspidas (ordem reversa)
+        const reversedLayers = Array.from(depthLayers).reverse();
+        reversedLayers.forEach((layer, index) => {
+            setTimeout(() => {
+                layer.style.animation = `spitOut 2s ease-out forwards`;
+            }, index * 200); // Delay menor para efeito mais rápido
+        });
+        
+        // Criar partículas sendo cuspidas
+        createSpitParticles();
+        
+        // Animar fechamento do buraco
+        setTimeout(() => {
+            abyssHole.style.animation = 'abyssShrink 2s ease-in forwards';
+            playSound('abyssClose');
+        }, 1500);
+        
+    }, 5000);
+    
+    // Remover o efeito após 10 segundos
+    setTimeout(() => {
+        abyssHole.remove();
+        style.remove();
+        document.body.classList.remove('abyss-activated', 'abyss-spitting');
+        
+        // Restaurar as camadas
+        depthLayers.forEach(layer => {
+            layer.style.animation = '';
+            layer.style.transform = '';
+            layer.style.opacity = '';
+        });
+        
+        abyssContainer.style.transform = '';
+        abyssContainer.style.filter = '';
+        
+        console.log('🌅 O abismo se fechou... por enquanto.');
+    }, 10000);
+}
+
+function createSuctionParticles() {
+    const abyssContainer = document.querySelector('.abyss-container');
+    
+    for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.className = 'suction-particle';
+            particle.style.cssText = `
+                position: absolute;
+                width: ${Math.random() * 6 + 2}px;
+                height: ${Math.random() * 6 + 2}px;
+                background: rgba(74, 158, 255, 0.8);
+                border-radius: 50%;
+                top: ${Math.random() * 100}%;
+                left: ${Math.random() * 100}%;
+                z-index: 999;
+                animation: suckParticle 2s ease-in forwards;
+                box-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+            `;
+            
+            // Adicionar animação da partícula
+            const particleStyle = document.createElement('style');
+            particleStyle.textContent = `
+                @keyframes suckParticle {
+                    0% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(-50vw, -50vh) scale(0) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(particleStyle);
+            
+            abyssContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+                particleStyle.remove();
+            }, 2000);
+        }, i * 80);
+    }
+}
+
+function createSpitParticles() {
+    const abyssContainer = document.querySelector('.abyss-container');
+    
+    for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.className = 'spit-particle';
+            particle.style.cssText = `
+                position: absolute;
+                width: ${Math.random() * 8 + 3}px;
+                height: ${Math.random() * 8 + 3}px;
+                background: rgba(255, 68, 68, 0.8);
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                z-index: 999;
+                animation: spitParticle 2s ease-out forwards;
+                box-shadow: 0 0 15px rgba(255, 68, 68, 0.7);
+            `;
+            
+            // Adicionar animação da partícula sendo cuspida
+            const particleStyle = document.createElement('style');
+            particleStyle.textContent = `
+                @keyframes spitParticle {
+                    0% {
+                        transform: translate(-50%, -50%) scale(0);
+                        opacity: 0;
+                    }
+                    20% {
+                        transform: translate(-50%, -50%) scale(1.5);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(${(Math.random() - 0.5) * 400}px, ${(Math.random() - 0.5) * 400}px) scale(0) rotate(${Math.random() * 720}deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(particleStyle);
+            
+            abyssContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+                particleStyle.remove();
+            }, 2000);
+        }, i * 50);
+    }
+}
+
+document.addEventListener('keydown', function(e) {
+    clearTimeout(timeout);
+    
+    console.log(`Tecla pressionada: ${e.code}, Esperando: ${konamiCode[index]}, Índice: ${index}`);
+
+    if (e.code === konamiCode[index]) {
+        index++;
+        console.log(`✅ Tecla correta! Progresso: ${index}/${konamiCode.length}`);
+
+        if (index === konamiCode.length) {
+            EfeitoAbismo();
+            index = 0;
+            console.log('🎉 Konami Code completo! Prepare-se para o abismo...');
+        }
+        
+        // Reset após 2 segundos de inatividade
+        timeout = setTimeout(() => {
+            console.log('⏰ Timeout - resetando sequência');
+            index = 0;
+        }, 2000);
+
+    } else {
+        console.log('❌ Tecla incorreta - resetando sequência');
+        index = 0;
+    }
+});
+
     </script>
 </body>
 </html>
