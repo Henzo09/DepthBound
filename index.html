@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEPTHBOUND - Desça o Abismo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* Animação de fundo - Partículas flutuantes */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(74, 158, 255, 0.6);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            background: rgba(0, 0, 0, 0.98);
+            box-shadow: 0 5px 30px rgba(74, 158, 255, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4a9eff;
+            text-decoration: none;
+            position: relative;
+            text-shadow: 0 0 20px rgba(74, 158, 255, 0.8);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(74, 158, 255, 0.8); }
+            50% { text-shadow: 0 0 40px rgba(74, 158, 255, 1); }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background: rgba(74, 158, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 158, 255, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f3460 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(74, 158, 255, 0.15) 0%, transparent 70%);
+            animation: heroBreath 4s ease-in-out infinite;
+        }
+
+        @keyframes heroBreath {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 5em;
+            color: #4a9eff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 50px rgba(74, 158, 255, 1);
+            animation: titleFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: subtitleFade 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes subtitleFade {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .warning-banner {
+            background: linear-gradient(45deg, rgba(255, 68, 68, 0.2), rgba(139, 0, 0, 0.3));
+            border: 2px solid #ff4444;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+            animation: warningPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 68, 68, 0.8); }
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #4a9eff, #ff4444);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: buttonGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(74, 158, 255, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(74, 158, 255, 1); }
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 20px 50px rgba(74, 158, 255, 0.8);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.1), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .section:hover::before {
+            left: 100%;
+        }
+
+        .section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border-color: rgba(74, 158, 255, 0.8);
+        }
+
+        .section h2 {
+            color: #4a9eff;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            animation: sectionTitle 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes sectionTitle {
+            0% { text-shadow: 0 0 20px rgba(74, 158, 255, 0.6); }
+            100% { text-shadow: 0 0 30px rgba(74, 158, 255, 1); }
+        }
+
+        /* Abyss Depth Visualization */
+        .abyss-container {
+            position: relative;
+            height: 600px;
+            background: linear-gradient(to bottom, 
+                #87CEEB 0%, 
+                #4169E1 15%, 
+                #2F4F4F 30%, 
+                #800080 45%, 
+                #8B0000 60%, 
+                #4B0000 75%,
+                #000000 100%
+            );
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 30px 0;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .depth-layer {
+            position: absolute;
+            right: 20px;
+            left: 20px;
+            color: white;
+            font-weight: bold;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            border-left: 4px solid #4a9eff;
+            transition: all 0.3s ease;
+            animation: depthFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes depthFloat {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(5px); }
+        }
+
+        .depth-layer:hover {
+            transform: scale(1.05);
+            background: rgba(74, 158, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.5);
+        }
+
+        .curse-effect {
+            color: #ff4444;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+            animation: curseFlicker 2s ease-in-out infinite;
+        }
+
+        @keyframes curseFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .team-member {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(255, 68, 68, 0.1));
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(74, 158, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            animation: memberPulse 5s ease-in-out infinite;
+        }
+
+        @keyframes memberPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(74, 158, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(74, 158, 255, 0.6); }
+        }
+
+        .team-member:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(74, 158, 255, 0.6);
+        }
+
+        .team-member h3 {
+            color: #4a9eff;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .team-member .role {
+            color: #ff4444;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Gameplay Cards */
+        .gameplay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .gameplay-card {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .gameplay-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(74, 158, 255, 0.2) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .gameplay-card:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .gameplay-card:hover {
+            transform: translateY(-15px) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(74, 158, 255, 0.4);
+            border-color: rgba(74, 158, 255, 0.8);
+        }
+
+        .gameplay-card h3 {
+            color: #4a9eff;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        /* Story Section */
+        .story-content {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(74, 158, 255, 0.1));
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(74, 158, 255, 0.05), transparent);
+            animation: storyShimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes storyShimmer {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .objective {
+            background: rgba(255, 68, 68, 0.2);
+            border: 2px solid #ff4444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: objectivePulse 3s ease-in-out infinite;
+        }
+
+		.play-now-btn {
+    background: linear-gradient(45deg, #4a9eff, #ff4444) !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 12px 25px !important;
+    border-radius: 25px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    animation: playButtonGlow 3s ease-in-out infinite !important;
+    box-shadow: 0 5px 15px rgba(74, 158, 255, 0.4) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+@keyframes playButtonGlow {
+    0%, 100% { 
+        box-shadow: 0 5px 15px rgba(74, 158, 255, 0.4), 0 0 25px rgba(74, 158, 255, 0.3) !important;
+    }
+    50% { 
+        box-shadow: 0 8px 25px rgba(74, 158, 255, 0.8), 0 0 40px rgba(74, 158, 255, 0.6) !important;
+    }
+}
+
+.play-now-btn:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 15px 35px rgba(74, 158, 255, 0.8) !important;
+    background: linear-gradient(45deg, #ff4444, #4a9eff) !important;
+}
+
+.play-now-btn::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+}
+
+        @keyframes objectivePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 68, 68, 0.8); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 3em;
+            }
+            
+            .section {
+                padding: 30px 20px;
+            }
+            
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gameplay-grid {
+                grid-template-columns: 1fr;
+            }
+
+			.play-now-btn {
+        display: block !important;
+        position: absolute !important;
+        top: 50% !important;
+        right: 20px !important;
+        transform: translateY(-50%) !important;
+        padding: 10px 20px !important;
+        font-size: 0.9em !important;
+    }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas flutuantes -->
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="nav-container">
+            <a href="" class="logo">DEPTHBOUND</a>
+            <nav class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#story">História</a>
+    <a href="#abyss">Abismo</a>
+    <a href="#gameplay">Gameplay</a>
+    <a href="#team">Equipe</a>
+    <a href="https://www.roblox.com/pt/games/89884409320225/Depthbound" class="play-now-btn">🎮 Jogue Agora</a>
+</nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>DEPTHBOUND</h1>
+            <p class="hero-subtitle">Desça o Abismo... Se Você Puder Suportar a Maldição</p>
+            <div class="warning-banner">
+                <strong>⚠️ AVISO CRÍTICO:</strong> A cada camada mais profunda, a maldição do abismo consome sua sanidade e corpo. Poucos retornam... e nunca são os mesmos.
+            </div>
+            <a href="#story" class="cta-button">🕳️ Explore o Abismo</a>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- História -->
+            <section class="section" id="story">
+                <h2>📖 História & Mundo</h2>
+                <div class="story-content">
+                    <h3 style="color: #4a9eff; margin-bottom: 20px;">🌟 A Descoberta</h3>
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 25px;">
+                        Há dois mil anos, um buraco colossal apareceu misteriosamente no centro da Terra - <strong>O Abismo</strong>. 
+                        Suas profundezas parecem infinitas, e suas paredes abrigam criaturas e tesouros únicos que desafiam 
+                        todas as leis da natureza conhecida.
+                    </p>
+                    
+                    <h3 style="color: #ff4444; margin-bottom: 20px;">💀 A Maldição Mortal</h3>
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 25px;">
+                        Exploradores descobriram que <strong>subir</strong> do abismo desencadeia uma maldição devastadora. 
+                        Quanto mais profundo você desce, mais severos são os efeitos ao tentar retornar à superfície. 
+                        Muitos preferem morrer nas profundezas a enfrentar o horror da subida.
+                    </p>
+
+                    <div class="objective">
+                        <h3 style="color: #4a9eff; margin-bottom: 15px;">🎯 SEU OBJETIVO FINAL</h3>
+                        <p style="font-size: 1.2em; font-weight: bold;">
+                            Alcançar o fundo do Abismo e descobrir seus segredos mais sombrios - 
+                            mesmo que isso signifique nunca mais poder retornar à superfície.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sistema do Abismo -->
+            <section class="section" id="abyss">
+                <h2>🕳️ O Sistema da Maldição</h2>
+                <div class="abyss-container">
+                    <div class="depth-layer" style="top: 30px;">
+                        <strong>Superfície (0m)</strong><br>
+                        <span style="color: #87CEEB;">Zona Segura - Sem efeitos</span>
+                    </div>
+                    
+                    <div class="depth-layer" style="top: 120px;">
+                        <strong>Primeira Camada (0 - 1.350m)</strong><br>
+                        <span class="curse-effect">Maldição: Tontura leve e náusea | Chance de ocorrer: 5%</span>
+                    </div>
+                    
+                    <div class="depth-layer" style="top: 210px;">
+                        <strong>Segunda Camada (1.350 - 2.600m)</strong><br>
+                        <span class="curse-effect">Maldição: Vômito intenso e febre | Chance de ocorrer: 10%</span>
+                    </div>
+                    
+                    <div class="depth-layer" style="top: 300px;">
+                        <strong>Terceira Camada (2.600 - 7.000m)</strong><br>
+                        <span class="curse-effect">Maldição: Alucinações e desorientação | Chance de ocorrer: 20%</span>
+                    </div>
+                    
+                    <div class="depth-layer" style="top: 390px;">
+                        <strong>Quarta Camada (7.000 - 12.000m)</strong><br>
+                        <span class="curse-effect">Maldição: Sangramento por todos os orifícios | Chance de ocorrer: 30%</span>
+                    </div>
+                    
+                    <div class="depth-layer" style="top: 480px;">
+                        <strong>Quinta Camada (12.000 - 15.500m)</strong><br>
+                        <span class="curse-effect">Maldição: Perda total de humanidade | Chance de ocorrer: 50%</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gameplay -->
+            <section class="section" id="gameplay">
+                <h2>🎮 Mecânicas de Jogo</h2>
+                <div class="gameplay-grid">
+                    <div class="gameplay-card">
+                        <h3>🔍 Exploração Estratégica</h3>
+                        <p>Cada descida é uma decisão irreversível. Planeje cuidadosamente sua jornada, pois quanto mais fundo você vai, mais impossível se torna a volta.</p>
+                    </div>
+                    
+                    <div class="gameplay-card">
+                        <h3>⚔️ Combate Tático</h3>
+                        <p>Enfrente criaturas bizarras e únicas de cada camada. Use estratégia e recursos limitados para sobreviver aos perigos crescentes.</p>
+                    </div>
+                    
+                    <div class="gameplay-card">
+                        <h3>🧠 Gerenciamento de Sanidade</h3>
+                        <p>Monitore sua sanidade mental conforme a maldição afeta sua percepção. Alucinações podem ser fatais nas profundezas.</p>
+                    </div>
+                    
+                    <div class="gameplay-card">
+                        <h3>🩸 Sistema de Maldição</h3>
+                        <p>Cada camada traz novos sintomas. Gerencie seus recursos e tempo para minimizar os efeitos devastadores da subida.</p>
+                    </div>
+                    
+                    <div class="gameplay-card">
+                        <h3>🏺 Coleta de Artefatos</h3>
+                        <p>Descubra relíquias antigas e recursos únicos. Cada tesouro pode ser crucial para sua sobrevivência ou sua perdição.</p>
+                    </div>
+                    
+                    <div class="gameplay-card">
+                        <h3>🧩 Mistérios Profundos</h3>
+                        <p>Resolva enigmas ancestrais e desvende os segredos do abismo. Cada descoberta o aproxima da verdade... e do perigo.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Equipe -->
+            <section class="section" id="team">
+                <h2>👥 Equipe de Desenvolvimento</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <h3>🎮 Boda_Grande</h3>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>🎨 Nicolas</h3>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h3>⚡ Electro</h3>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Efeito de scroll no header
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling para links âncora
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Adicionar mais partículas dinamicamente
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            
+            // Variar a cor das partículas
+            const colors = ['rgba(74, 158, 255, 0.6)', 'rgba(255, 68, 68, 0.4)', 'rgba(255, 255, 255, 0.3)'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.querySelector('.floating-particles').appendChild(particle);
+            
+            // Remover partícula após animação
+            setTimeout(() => {
+                particle.remove();
+            }, 20000);
+        }
+
+        // Criar partículas continuamente
+        setInterval(createParticle, 2000);
+
+        // Efeito de hover nas seções
+        document.querySelectorAll('.section').forEach(section => {
+            section.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+            });
+            
+            section.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
