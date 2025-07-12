@@ -18,6 +18,56 @@
             overflow-x: hidden;
         }
 
+        .version-tooltip {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .version-tooltip:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .version-tooltip::before {
+            content: "v";
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .version-tooltip::after {
+            content: "Versão 1.0.5";
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .version-tooltip:hover::after {
+            opacity: 1;
+        }
+
         /* Animação de fundo - Partículas flutuantes */
         .floating-particles {
             position: fixed;
@@ -709,6 +759,7 @@
                 </div>
             </section>
         </div>
+        <div class="version-tooltip"></div>
     </div>
 
     <script>
